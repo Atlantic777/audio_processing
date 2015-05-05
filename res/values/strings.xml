@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="app_name">audioProcessing</string>
+    <string name="action_settings">Settings</string>
+    <string name="hello_world">Audio processing</string>
+    <string name="_sdcard_outiir_wav">/sdcard/OutIir.wav</string>
+    <string name="_sdcard_outfir_wav">/sdcard/OutFir.wav</string>
+    <string name="_sdcard_freq_sweep_wav">/sdcard/Freq_sweep.wav</string>
+
+</resources>
