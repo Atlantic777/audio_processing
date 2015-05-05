@@ -10,18 +10,17 @@
 #include "const.h"
 #include "WAVheader.h"
 #include "processing.h"
-#include <jni.h>
-#include <android/log.h>
 
 double **sampleBuffer;
 double **sampleBufferOut;
 static int stop = 0;
 extern double *circularBufferL;
 extern double *circularBufferR;
+extern double *yBufferL;
+extern double *yBufferR;
 WAV_HEADER inWAVhdr,outputWAVhdr;
 
-void Java_com_example_audioprocessing_MainActivity_audioProcessingJNI(JNIEnv* env,jobject thiz,
-        jint choice)
+int main()
 {
 	FILE *wav_in = NULL;
 	FILE *wav_out = NULL;
@@ -33,6 +32,8 @@ void Java_com_example_audioprocessing_MainActivity_audioProcessingJNI(JNIEnv* en
 
 	circularBufferR = (double*) calloc(sizeof(double),COEF_NUM);
 	circularBufferL = (double*) calloc(sizeof(double),COEF_NUM);
+    yBufferR = (double*)calloc(sizeof(double), COEF_NUM);
+    yBufferL = (double*)calloc(sizeof(double), COEF_NUM);
 	sampleBuffer = (double**) calloc(MAX_NUM_CHANNEL,sizeof(double*));
 	sampleBufferOut = (double**) calloc(MAX_NUM_CHANNEL,sizeof(double*));
 
@@ -42,9 +43,9 @@ void Java_com_example_audioprocessing_MainActivity_audioProcessingJNI(JNIEnv* en
 	}
 	// Open input and output wav files
 	//-------------------------------------------------
-	strcpy(WavInputName,"/sdcard/Freq_sweep.wav");			//write name of input signal
+	strcpy(WavInputName,"Freq_sweep.wav");			//write name of input signal
 	wav_in = OpenWavFileForRead (WavInputName,"rb");
-		strcpy(WavOutputNameOut,"/sdcard/outFir.wav");
+		strcpy(WavOutputNameOut,"outFir.wav");
 		wav_out = OpenWavFileForRead (WavOutputNameOut,"wb");
 	//-------------------------------------------------
 	// Read input wav header
@@ -65,7 +66,7 @@ void Java_com_example_audioprocessing_MainActivity_audioProcessingJNI(JNIEnv* en
 	outputWAVhdr.fmt.BlockAlign = oneChannelBlockAlign*outputWAVhdr.fmt.NumChannels;
 
 	WriteWavHeader(wav_out);
-    initCoef(choice);							// get coefficients for FIR or IIR filter
+    initCoef(0);							// get coefficients for FIR or IIR filter
 
 	// Processing loop
 	//-------------------------------------------------
@@ -139,9 +140,4 @@ void Java_com_example_audioprocessing_MainActivity_audioProcessingJNI(JNIEnv* en
 		free(sampleBuffer);
 		free(sampleBufferOut);
 		return ;
-}
-
-void Java_com_example_audioprocessing_MainActivity_stopProcessingJNI(JNIEnv* env,jobject thiz) {
-
-		stop = 1;
 }
